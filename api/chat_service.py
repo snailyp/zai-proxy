@@ -144,14 +144,15 @@ async def prepare_data(request, access_token, streaming=True):
         "user_id": str(uuid.uuid4()),
     }
 
-    e = "requestId,{request_id},timestamp,{timestamp},user_id,{user_id}".format(
+    t = "requestId,{request_id},timestamp,{timestamp},user_id,{user_id}".format(
         request_id=params["requestId"],
         timestamp=int(params["timestamp"]),
         user_id=params["user_id"],
     )
 
-    t = zai_data["messages"][-1]["content"]
-    signature_data = generate_signature(e, t)
+    e = zai_data["messages"][-1]["content"]
+    r = int(time.time() * 1000)
+    signature_data = generate_signature(t, e, r)
     params["signature_timestamp"] = str(signature_data["timestamp"])
     headers = settings.HEADERS
     headers["Authorization"] = f"Bearer {access_token}"
